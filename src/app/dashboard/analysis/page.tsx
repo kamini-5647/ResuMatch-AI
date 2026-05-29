@@ -20,7 +20,8 @@ import {
   Award,
   Zap,
   Target,
-  FileText
+  FileText,
+  Sparkles
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
