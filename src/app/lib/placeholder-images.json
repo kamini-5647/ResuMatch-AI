@@ -1,0 +1,22 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-bg",
+      "description": "Modern abstract networking background",
+      "imageUrl": "https://picsum.photos/seed/resumatch-hero/1200/800",
+      "imageHint": "abstract network"
+    },
+    {
+      "id": "user-1",
+      "description": "Professional headshot of a woman",
+      "imageUrl": "https://picsum.photos/seed/user1/200/200",
+      "imageHint": "professional woman"
+    },
+    {
+      "id": "user-2",
+      "description": "Professional headshot of a man",
+      "imageUrl": "https://picsum.photos/seed/user2/200/200",
+      "imageHint": "professional man"
+    }
+  ]
+}
