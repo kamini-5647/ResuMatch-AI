@@ -1,3 +1,4 @@
+
 "use client"
 
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -46,7 +47,7 @@ const skillDistribution = [
   { name: 'Strategy', value: 10 },
 ];
 
-const COLORS = ['#6366f1', '#06b6d4', '#10b981', '#f59e0b'];
+const COLORS = ['#4f46e5', '#0ea5e9', '#10b981', '#f59e0b'];
 
 const recentResumes = [
   { id: 1, name: 'Senior_Architect_2024.pdf', score: 92, date: '2 hours ago', status: 'Optimal' },
@@ -59,14 +60,14 @@ export default function Dashboard() {
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
-          <h1 className="text-4xl font-black font-headline tracking-tighter text-foreground flex items-center gap-3">
-            Career Dashboard
+          <h1 className="text-5xl font-black font-headline tracking-tighter text-foreground flex items-center gap-3">
+            Career Portal
             <Sparkles className="h-8 w-8 text-primary animate-pulse" />
           </h1>
           <p className="text-muted-foreground font-medium text-lg">Your AI-powered journey to professional excellence.</p>
         </div>
         <Link href="/dashboard/upload">
-          <Button className="rounded-2xl h-14 px-8 text-lg font-bold shadow-2xl shadow-primary/20 hover:scale-105 transition-all">
+          <Button className="rounded-2xl h-16 px-8 text-xl font-black shadow-2xl shadow-primary/20 hover:scale-105 transition-all">
             <Plus className="mr-2 h-6 w-6" /> Analyze Resume
           </Button>
         </Link>
@@ -74,111 +75,114 @@ export default function Dashboard() {
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard 
-          title="Average ATS Score" 
-          value="82" 
+          title="Avg. ATS Score" 
+          value="82%" 
           icon={Award} 
           trend="12%" 
           trendUp 
-          className="rounded-[2rem] bg-mesh border-none"
+          className="rounded-[2rem] bg-card border-none shadow-xl shadow-primary/5"
         />
         <StatCard 
-          title="Expertise Units" 
-          value="48" 
+          title="Skill Delta" 
+          value="+48" 
           icon={Zap} 
           trend="4" 
           trendUp 
-          className="rounded-[2rem] bg-mesh border-none"
+          className="rounded-[2rem] bg-card border-none shadow-xl shadow-primary/5"
         />
         <StatCard 
-          title="Total Analyses" 
+          title="Analyses Run" 
           value="12" 
           icon={FileCheck} 
-          className="rounded-[2rem] bg-mesh border-none"
+          className="rounded-[2rem] bg-card border-none shadow-xl shadow-primary/5"
         />
         <StatCard 
-          title="Market Match" 
+          title="Job Pipeline" 
           value="156" 
           icon={Briefcase} 
           trend="24%" 
           trendUp 
-          className="rounded-[2rem] bg-mesh border-none"
+          className="rounded-[2rem] bg-card border-none shadow-xl shadow-primary/5"
         />
       </div>
 
       <div className="grid gap-8 lg:grid-cols-7">
-        <Card className="lg:col-span-4 rounded-[2.5rem] border-none shadow-sm overflow-hidden">
-          <CardHeader className="pb-2">
+        <Card className="lg:col-span-4 rounded-[2.5rem] border-none shadow-xl shadow-primary/5 overflow-hidden bg-card">
+          <CardHeader className="pb-2 p-8">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-xl font-black font-headline">Strength Trend</CardTitle>
+                <CardTitle className="text-2xl font-black font-headline">Strength Metrics</CardTitle>
                 <CardDescription>Visualizing your profile optimization over time.</CardDescription>
               </div>
-              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                <TrendingUp className="h-5 w-5" />
+              <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                <TrendingUp className="h-6 w-6" />
               </div>
             </div>
           </CardHeader>
-          <CardContent className="h-[320px] pt-4">
+          <CardContent className="h-[350px] pt-4 p-8">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={performanceData}>
                 <defs>
                   <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.15}/>
                     <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <XAxis 
                   dataKey="name" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{fill: 'hsl(var(--muted-foreground))', fontSize: 12, fontWeight: 600}} 
-                  dy={10} 
+                  tick={{fill: 'hsl(var(--muted-foreground))', fontSize: 13, fontWeight: 700}} 
+                  dy={15} 
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{fill: 'hsl(var(--muted-foreground))', fontSize: 12, fontWeight: 600}} 
-                  dx={-10} 
+                  tick={{fill: 'hsl(var(--muted-foreground))', fontSize: 13, fontWeight: 700}} 
+                  dx={-15} 
                 />
                 <Tooltip 
                   contentStyle={{ 
-                    borderRadius: '1.25rem', 
+                    borderRadius: '1.5rem', 
                     border: 'none', 
-                    boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
-                    padding: '12px 16px'
+                    boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.15)',
+                    padding: '16px 24px',
+                    fontWeight: 700
                   }}
                 />
                 <Area 
                   type="monotone" 
                   dataKey="score" 
                   stroke="hsl(var(--primary))" 
-                  strokeWidth={4} 
+                  strokeWidth={5} 
                   fillOpacity={1} 
                   fill="url(#colorScore)" 
+                  animationDuration={1500}
                 />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-3 rounded-[2.5rem] border-none shadow-sm overflow-hidden bg-mesh">
-          <CardHeader>
-            <CardTitle className="text-xl font-black font-headline">Skill Archetype</CardTitle>
-            <CardDescription>Distribution of your core competencies.</CardDescription>
+        <Card className="lg:col-span-3 rounded-[2.5rem] border-none shadow-xl shadow-primary/5 overflow-hidden bg-mesh">
+          <CardHeader className="p-8">
+            <CardTitle className="text-2xl font-black font-headline">Skill Profile</CardTitle>
+            <CardDescription>Breakdown of your professional core.</CardDescription>
           </CardHeader>
-          <CardContent className="h-[320px] flex items-center justify-center">
+          <CardContent className="h-[350px] flex items-center justify-center p-8">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={skillDistribution}
                   cx="50%"
                   cy="50%"
-                  innerRadius={70}
-                  outerRadius={110}
-                  paddingAngle={8}
+                  innerRadius={80}
+                  outerRadius={120}
+                  paddingAngle={10}
                   dataKey="value"
-                  cornerRadius={10}
+                  cornerRadius={15}
+                  stroke="none"
                 >
                   {skillDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -192,42 +196,42 @@ export default function Dashboard() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-12">
-        <Card className="lg:col-span-8 rounded-[2.5rem] border-none shadow-sm overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between border-b bg-muted/20 px-8 py-6">
+        <Card className="lg:col-span-8 rounded-[2.5rem] border-none shadow-xl shadow-primary/5 overflow-hidden bg-card">
+          <CardHeader className="flex flex-row items-center justify-between border-b bg-muted/30 px-8 py-8">
             <div>
-              <CardTitle className="text-xl font-black font-headline">Recent Optimization Pipeline</CardTitle>
-              <CardDescription>Track your most recent AI analysis sessions.</CardDescription>
+              <CardTitle className="text-2xl font-black font-headline">Analysis Pipeline</CardTitle>
+              <CardDescription>Historical tracking of your resume variants.</CardDescription>
             </div>
-            <Button variant="ghost" className="rounded-xl font-bold text-primary hover:bg-primary/5">
-              View History
+            <Button variant="outline" className="rounded-xl font-bold border-2 px-6">
+              Full History
             </Button>
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-border/50">
               {recentResumes.map((resume) => (
-                <div key={resume.id} className="flex items-center justify-between p-6 transition-colors hover:bg-muted/30 group">
-                  <div className="flex items-center gap-5">
+                <div key={resume.id} className="flex items-center justify-between p-8 transition-colors hover:bg-muted/30 group">
+                  <div className="flex items-center gap-6">
                     <div className={cn(
-                      "flex h-14 w-14 items-center justify-center rounded-2xl font-black text-lg shadow-sm transition-transform group-hover:scale-110 group-hover:rotate-3",
-                      resume.score >= 90 ? "bg-emerald-100 text-emerald-700" : 
-                      resume.score >= 80 ? "bg-indigo-100 text-indigo-700" : "bg-amber-100 text-amber-700"
+                      "flex h-16 w-16 items-center justify-center rounded-[1.25rem] font-black text-xl shadow-lg transition-transform group-hover:scale-110 group-hover:rotate-3",
+                      resume.score >= 90 ? "bg-emerald-500 text-white" : 
+                      resume.score >= 80 ? "bg-primary text-white" : "bg-amber-500 text-white"
                     )}>
                       {resume.score}
                     </div>
                     <div>
-                      <p className="font-black text-base group-hover:text-primary transition-colors">{resume.name}</p>
-                      <div className="flex items-center gap-3 mt-1">
-                        <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{resume.date}</p>
-                        <span className="h-1 w-1 rounded-full bg-muted-foreground/30"></span>
+                      <p className="font-black text-lg group-hover:text-primary transition-colors">{resume.name}</p>
+                      <div className="flex items-center gap-4 mt-1">
+                        <p className="text-xs text-muted-foreground font-black uppercase tracking-[0.2em]">{resume.date}</p>
+                        <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/30"></span>
                         <p className={cn(
-                          "text-xs font-black uppercase tracking-widest",
+                          "text-xs font-black uppercase tracking-[0.2em]",
                           resume.score >= 90 ? "text-emerald-600" : "text-amber-600"
                         )}>{resume.status}</p>
                       </div>
                     </div>
                   </div>
-                  <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl hover:bg-primary hover:text-white transition-all">
-                    <ArrowRight className="h-4 w-4" />
+                  <Button variant="secondary" size="icon" className="h-12 w-12 rounded-2xl hover:bg-primary hover:text-white transition-all">
+                    <ArrowRight className="h-5 w-5" />
                   </Button>
                 </div>
               ))}
@@ -235,32 +239,32 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <div className="lg:col-span-4 space-y-6">
-          <Card className="bg-gradient-to-br from-indigo-600 to-violet-700 border-none text-primary-foreground shadow-2xl rounded-[2.5rem] overflow-hidden relative p-8">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
-            <CardContent className="p-0 relative z-10 space-y-6">
-              <div className="h-14 w-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
-                <Target className="h-8 w-8" />
+        <div className="lg:col-span-4 space-y-8">
+          <Card className="bg-primary text-primary-foreground shadow-2xl rounded-[2.5rem] overflow-hidden relative p-10 group">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-24 -mt-24 blur-3xl group-hover:scale-110 transition-transform"></div>
+            <CardContent className="p-0 relative z-10 space-y-8">
+              <div className="h-16 w-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                <Target className="h-10 w-10" />
               </div>
-              <div className="space-y-2">
-                <h3 className="text-2xl font-black font-headline leading-tight">Pro Career Scouting</h3>
-                <p className="text-indigo-100 font-medium text-sm leading-relaxed">
-                  Join our exclusive network of elite professionals. Get direct introductions to top-tier recruiters.
+              <div className="space-y-3">
+                <h3 className="text-3xl font-black font-headline leading-tight">Career Scouting</h3>
+                <p className="text-primary-foreground/80 font-medium text-base leading-relaxed">
+                  Unlock access to hidden roles and direct recruiter referrals with our elite network.
                 </p>
               </div>
-              <Button variant="secondary" className="w-full h-14 rounded-2xl font-black text-lg bg-white text-indigo-700 hover:bg-indigo-50 shadow-xl shadow-black/20">
-                Upgrade to Elite
+              <Button variant="secondary" className="w-full h-16 rounded-2xl font-black text-lg bg-white text-primary hover:bg-primary-foreground shadow-xl shadow-black/10">
+                Go Elite
               </Button>
             </CardContent>
           </Card>
           
-          <div className="p-8 rounded-[2rem] border-2 border-primary/10 bg-primary/5 space-y-4">
+          <div className="p-8 rounded-[2.5rem] border-2 border-primary/10 bg-primary/5 space-y-4">
              <div className="flex items-center gap-2 text-primary">
-                <Sparkles className="h-5 w-5" />
-                <h4 className="font-black text-sm uppercase tracking-widest">AI Tip of the Day</h4>
+                <Sparkles className="h-6 w-6" />
+                <h4 className="font-black text-xs uppercase tracking-[0.2em]">AI Career Hack</h4>
              </div>
-             <p className="text-sm font-medium text-muted-foreground leading-relaxed">
-               "Strong resumes focus on <span className="text-foreground font-bold underline decoration-primary underline-offset-4">quantifiable results</span>. Replace 'managed a team' with 'led a team of 15 to exceed KPIs by 30%'."
+             <p className="text-sm font-bold text-muted-foreground leading-relaxed">
+               "Resumes with <span className="text-foreground font-black underline decoration-primary decoration-2 underline-offset-4">quantified achievements</span> get 3x more views. Use metrics like revenue, time saved, or team size."
              </p>
           </div>
         </div>

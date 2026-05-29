@@ -2,28 +2,40 @@
 {
   "placeholderImages": [
     {
-      "id": "hero-bg",
-      "description": "Modern abstract networking background",
+      "id": "hero-dashboard",
+      "description": "Premium dashboard UI visualization",
       "imageUrl": "https://picsum.photos/seed/resumatch-hero/1200/800",
-      "imageHint": "abstract network"
+      "imageHint": "dashboard software"
     },
     {
-      "id": "user-1",
-      "description": "Professional headshot of a woman",
-      "imageUrl": "https://picsum.photos/seed/user1/200/200",
+      "id": "feature-ats",
+      "description": "Data analysis and scanning visualization",
+      "imageUrl": "https://picsum.photos/seed/ats-scan/600/400",
+      "imageHint": "data analysis"
+    },
+    {
+      "id": "feature-matching",
+      "description": "Connecting people with opportunities",
+      "imageUrl": "https://picsum.photos/seed/matching/600/400",
+      "imageHint": "business networking"
+    },
+    {
+      "id": "user-female",
+      "description": "Professional female headshot",
+      "imageUrl": "https://picsum.photos/seed/female-user/200/200",
       "imageHint": "professional woman"
     },
     {
-      "id": "user-2",
-      "description": "Professional headshot of a man",
-      "imageUrl": "https://picsum.photos/seed/user2/200/200",
+      "id": "user-male",
+      "description": "Professional male headshot",
+      "imageUrl": "https://picsum.photos/seed/male-user/200/200",
       "imageHint": "professional man"
     },
     {
-      "id": "user-default",
-      "description": "Default user avatar",
-      "imageUrl": "https://picsum.photos/seed/user-default/200/200",
-      "imageHint": "person avatar"
+      "id": "user-avatar-default",
+      "description": "Clean generic profile icon",
+      "imageUrl": "https://picsum.photos/seed/avatar/200/200",
+      "imageHint": "person profile"
     }
   ]
 }
