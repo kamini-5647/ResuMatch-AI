@@ -1,9 +1,11 @@
 "use client"
 
-import { useState, useCallback } from 'react';
-import { Card, CardContent } from "@/components/ui/card";
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { 
   Upload, 
   FileText, 
@@ -12,14 +14,18 @@ import {
   AlertCircle,
   FileUp,
   Loader2,
-  Cpu
+  Cpu,
+  Target,
+  Sparkles
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { parseResume } from '@/ai/flows/resume-parsing';
+import { scoreResume } from '@/ai/flows/ats-scoring';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ResumeUpload() {
   const [file, setFile] = useState<File | null>(null);
+  const [jobDescription, setJobDescription] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -29,7 +35,7 @@ export default function ResumeUpload() {
   const onDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile && (droppedFile.type === 'application/pdf' || droppedFile.name.endsWith('.docx'))) {
+    if (droppedFile && (droppedFile.type === 'application/pdf' || droppedFile.name.endsWith('.docx') || droppedFile.name.endsWith('.pdf'))) {
       setFile(droppedFile);
     } else {
       toast({
@@ -53,7 +59,6 @@ export default function ResumeUpload() {
     if (!file) return;
     
     setIsUploading(true);
-    // Simulate upload progress
     const interval = setInterval(() => {
       setProgress(p => {
         if (p >= 100) {
@@ -61,9 +66,9 @@ export default function ResumeUpload() {
           startAIProcessing();
           return 100;
         }
-        return p + 10;
+        return p + 5;
       });
-    }, 200);
+    }, 100);
   };
 
   const startAIProcessing = async () => {
@@ -71,18 +76,34 @@ export default function ResumeUpload() {
     setIsProcessing(true);
     
     try {
-      // Convert file to Base64 for GenAI
       const reader = new FileReader();
       reader.onload = async () => {
         const base64 = reader.result as string;
         try {
-          // Trigger the AI flow
-          const result = await parseResume({ resumeDataUri: base64 });
-          // Store result in session storage for the results page (simplified for demo)
-          sessionStorage.setItem('resume_analysis', JSON.stringify(result));
+          // 1. Parse Resume
+          const parsedResult = await parseResume({ resumeDataUri: base64 });
+          
+          // 2. If JD provided, run ATS scoring
+          let atsResult = null;
+          if (jobDescription.trim()) {
+            // We use the summary and experience as text for the scorer
+            const resumeContent = `${parsedResult.summary}\n\n${parsedResult.experience.map(e => `${e.title} at ${e.company}: ${e.description}`).join('\n')}\n\nSkills: ${parsedResult.skills.join(', ')}`;
+            atsResult = await scoreResume({
+              resumeText: resumeContent,
+              jobDescriptionText: jobDescription
+            });
+          }
+
+          sessionStorage.setItem('resume_analysis', JSON.stringify(parsedResult));
+          if (atsResult) {
+            sessionStorage.setItem('ats_analysis', JSON.stringify(atsResult));
+          } else {
+            sessionStorage.removeItem('ats_analysis');
+          }
+
           toast({
             title: "Analysis complete",
-            description: "Your resume has been successfully parsed."
+            description: "Your resume has been successfully processed with AI."
           });
           router.push('/dashboard/analysis');
         } catch (error) {
@@ -90,7 +111,7 @@ export default function ResumeUpload() {
           toast({
             variant: "destructive",
             title: "Processing failed",
-            description: "An error occurred while analyzing your resume."
+            description: "An error occurred during AI analysis."
           });
         }
       };
@@ -102,138 +123,162 @@ export default function ResumeUpload() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold font-headline">Analyze New Resume</h1>
-        <p className="text-muted-foreground">Upload your resume to get an instant AI-powered compatibility score.</p>
+      <div className="text-center space-y-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
+          <Sparkles className="h-3.5 w-3.5" />
+          Next-Gen AI Analysis
+        </div>
+        <h1 className="text-4xl font-extrabold font-headline tracking-tight text-foreground">
+          Analyze Your <span className="text-primary italic">Career Potential</span>
+        </h1>
+        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          Upload your resume and optionally paste a job description for a highly accurate ATS compatibility check.
+        </p>
       </div>
 
-      {!isUploading && !isProcessing ? (
-        <Card className="border-2 border-dashed border-primary/20 bg-primary/5 hover:border-primary/50 transition-colors cursor-pointer">
-          <CardContent 
-            className="p-12 flex flex-col items-center justify-center space-y-6"
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={onDrop}
-          >
-            <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
-              <Upload className="h-10 w-10 text-primary" />
-            </div>
-            <div className="text-center space-y-2">
-              <p className="text-xl font-semibold">Drag and drop your file here</p>
-              <p className="text-sm text-muted-foreground">Supported formats: PDF, DOCX (Max 10MB)</p>
-            </div>
-            
-            <input 
-              type="file" 
-              id="file-upload" 
-              className="hidden" 
-              accept=".pdf,.docx"
-              onChange={handleFileChange} 
-            />
-            <Button asChild className="rounded-xl px-8 h-12">
-              <label htmlFor="file-upload" className="cursor-pointer">
-                Browse Files
-              </label>
-            </Button>
-          </CardContent>
-        </Card>
-      ) : isUploading ? (
-        <Card className="border-none shadow-sm">
-          <CardContent className="p-12 text-center space-y-8">
-            <div className="space-y-4">
-              <FileUp className="h-12 w-12 text-primary mx-auto animate-bounce" />
-              <h3 className="text-xl font-bold font-headline">Uploading Resume...</h3>
-              <p className="text-muted-foreground">Securing your file transfer.</p>
-            </div>
-            <div className="max-w-md mx-auto space-y-2">
-              <Progress value={progress} className="h-3" />
-              <p className="text-sm font-medium text-right text-primary">{progress}%</p>
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card className="border-none shadow-sm">
-          <CardContent className="p-12 text-center space-y-8">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="h-24 w-24 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
-              </div>
-              <Cpu className="h-12 w-12 text-primary mx-auto relative z-10 animate-pulse" />
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold font-headline">AI Analyzing Content...</h3>
-              <p className="text-muted-foreground max-w-sm mx-auto">
-                Extracting skills, experience, and calculating ATS compatibility using advanced semantic models.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 max-w-xs mx-auto text-left text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500" /> 
-                Reading semantic structure
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500" /> 
-                Extracting technical skills
-              </div>
-              <div className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 text-primary animate-spin" /> 
-                Calculating compatibility score
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <div className="grid gap-8 lg:grid-cols-5">
+        <div className="lg:col-span-3 space-y-6">
+          {!isUploading && !isProcessing ? (
+            <Card className="border-2 border-dashed border-primary/30 bg-primary/5 hover:border-primary/60 transition-all cursor-pointer group rounded-3xl overflow-hidden">
+              <CardContent 
+                className="p-10 flex flex-col items-center justify-center space-y-6"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={onDrop}
+              >
+                <div className="h-20 w-20 rounded-3xl bg-primary/10 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                  <Upload className="h-10 w-10 text-primary" />
+                </div>
+                <div className="text-center space-y-2">
+                  <p className="text-xl font-bold font-headline">Drop your resume here</p>
+                  <p className="text-sm text-muted-foreground">PDF or DOCX (Max 10MB)</p>
+                </div>
+                
+                <input 
+                  type="file" 
+                  id="file-upload" 
+                  className="hidden" 
+                  accept=".pdf,.docx"
+                  onChange={handleFileChange} 
+                />
+                <Button asChild className="rounded-2xl px-8 h-12 shadow-lg shadow-primary/20">
+                  <label htmlFor="file-upload" className="cursor-pointer">
+                    Browse Local Files
+                  </label>
+                </Button>
+              </CardContent>
+            </Card>
+          ) : isUploading ? (
+            <Card className="border-none shadow-2xl rounded-3xl overflow-hidden bg-card">
+              <CardContent className="p-12 text-center space-y-8">
+                <div className="space-y-4">
+                  <div className="h-16 w-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto animate-bounce">
+                    <FileUp className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-bold font-headline">Uploading...</h3>
+                  <p className="text-muted-foreground">Securely transferring your document.</p>
+                </div>
+                <div className="max-w-md mx-auto space-y-3">
+                  <Progress value={progress} className="h-3 rounded-full" />
+                  <p className="text-sm font-bold text-primary">{progress}% Complete</p>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-none shadow-2xl rounded-3xl overflow-hidden bg-card">
+              <CardContent className="p-12 text-center space-y-8">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="h-28 w-28 rounded-full border-[6px] border-primary/20 border-t-primary animate-spin"></div>
+                  </div>
+                  <div className="h-16 w-16 bg-primary rounded-2xl flex items-center justify-center mx-auto relative z-10 animate-pulse shadow-xl shadow-primary/30">
+                    <Cpu className="h-8 w-8 text-white" />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-bold font-headline">AI Reasoning Engine...</h3>
+                  <p className="text-muted-foreground max-w-sm mx-auto">
+                    Comparing your professional narrative against industry-standard semantics.
+                  </p>
+                </div>
+                <div className="flex flex-col gap-4 max-w-xs mx-auto text-left">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" /> 
+                    <span className="text-sm font-medium">Extracting metadata</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" /> 
+                    <span className="text-sm font-medium">Analyzing skill hierarchy</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-primary/5 border border-primary/10">
+                    <Loader2 className="h-5 w-5 text-primary animate-spin shrink-0" /> 
+                    <span className="text-sm font-bold text-primary">Scoring compatibility</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-      {file && !isUploading && !isProcessing && (
-        <div className="space-y-4">
-          <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Selected File</h3>
-          <div className="flex items-center justify-between p-4 bg-card rounded-xl border shadow-sm group">
-            <div className="flex items-center gap-4">
-              <div className="h-10 w-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
-                <FileText className="h-5 w-5" />
+          {file && !isUploading && !isProcessing && (
+            <div className="flex items-center justify-between p-5 bg-card rounded-2xl border-2 border-primary/10 shadow-lg group animate-in slide-in-from-left-4">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary group-hover:rotate-6 transition-transform">
+                  <FileText className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="font-bold text-sm truncate max-w-[200px]">{file.name}</p>
+                  <p className="text-xs text-muted-foreground font-medium">{(file.size / 1024 / 1024).toFixed(2)} MB • Ready</p>
+                </div>
               </div>
-              <div>
-                <p className="font-medium text-sm">{file.name}</p>
-                <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" onClick={removeFile} className="text-destructive hover:bg-destructive/10">
+              <Button variant="ghost" size="icon" onClick={removeFile} className="text-destructive hover:bg-destructive/10 rounded-full">
                 <X className="h-5 w-5" />
               </Button>
             </div>
-          </div>
-          <Button className="w-full h-14 rounded-xl text-lg font-bold" onClick={processResume}>
-            Start Analysis
-          </Button>
+          )}
         </div>
-      )}
 
-      <div className="grid md:grid-cols-3 gap-6 pt-12">
-        <div className="flex gap-4">
-          <div className="h-10 w-10 shrink-0 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
-            <CheckCircle2 className="h-6 w-6" />
-          </div>
-          <div>
-            <h4 className="font-bold text-sm">Secure Processing</h4>
-            <p className="text-xs text-muted-foreground">Your data is encrypted and never shared with third parties.</p>
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="h-10 w-10 shrink-0 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-            <Cpu className="h-6 w-6" />
-          </div>
-          <div>
-            <h4 className="font-bold text-sm">Deep Context AI</h4>
-            <p className="text-xs text-muted-foreground">We understand the meaning behind your bullet points.</p>
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="h-10 w-10 shrink-0 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">
-            <AlertCircle className="h-6 w-6" />
-          </div>
-          <div>
-            <h4 className="font-bold text-sm">Actionable Feedback</h4>
-            <p className="text-xs text-muted-foreground">Not just a score, but a clear roadmap to improvement.</p>
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="rounded-3xl border-none shadow-sm overflow-hidden">
+            <CardHeader className="bg-muted/30">
+              <CardTitle className="text-lg font-headline flex items-center gap-2">
+                <Target className="h-5 w-5 text-primary" />
+                Target Job (Optional)
+              </CardTitle>
+              <CardDescription>
+                Paste the job description to get a tailored ATS score.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="jd" className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Job Description Content</Label>
+                  <Textarea 
+                    id="jd" 
+                    placeholder="Example: We are looking for a Senior Developer with 5+ years of experience in React..."
+                    className="min-h-[220px] rounded-2xl bg-muted/30 border-none focus-visible:ring-primary/20 transition-all text-sm leading-relaxed"
+                    value={jobDescription}
+                    onChange={(e) => setJobDescription(e.target.value)}
+                    disabled={isUploading || isProcessing}
+                  />
+                </div>
+                <Button 
+                  className="w-full h-14 rounded-2xl text-lg font-bold shadow-xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98]" 
+                  disabled={!file || isUploading || isProcessing}
+                  onClick={processResume}
+                >
+                  Start Deep Analysis
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="p-6 rounded-3xl bg-accent/5 border border-accent/10 space-y-4">
+            <h4 className="font-bold text-sm flex items-center gap-2 text-accent">
+              <Sparkles className="h-4 w-4" />
+              Why add a Job Description?
+            </h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Generic resumes rarely pass modern ATS. Our AI helps you find missing keywords specifically for the role you want.
+            </p>
           </div>
         </div>
       </div>

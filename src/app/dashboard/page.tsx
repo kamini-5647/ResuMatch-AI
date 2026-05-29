@@ -2,15 +2,13 @@
 
 import { StatCard } from "@/components/dashboard/StatCard";
 import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
   AreaChart, 
   Area,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   PieChart,
   Pie,
   Cell
@@ -21,11 +19,16 @@ import {
   Award, 
   Briefcase,
   ExternalLink,
-  Plus
+  Plus,
+  TrendingUp,
+  Sparkles,
+  Zap,
+  ArrowRight
 } from 'lucide-react';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 const performanceData = [
   { name: 'Jan', score: 65 },
@@ -40,28 +43,31 @@ const skillDistribution = [
   { name: 'Technical', value: 45 },
   { name: 'Soft Skills', value: 25 },
   { name: 'Management', value: 20 },
-  { name: 'Other', value: 10 },
+  { name: 'Strategy', value: 10 },
 ];
 
-const COLORS = ['#3B58E6', '#3BAEE6', '#10B981', '#6366F1'];
+const COLORS = ['#6366f1', '#06b6d4', '#10b981', '#f59e0b'];
 
 const recentResumes = [
-  { id: 1, name: 'Software_Engineer_v2.pdf', score: 92, date: '2 days ago' },
-  { id: 2, name: 'Full_Stack_Dev_Stripe.pdf', score: 85, date: '5 days ago' },
-  { id: 3, name: 'Product_Manager_Lead.pdf', score: 68, date: '1 week ago' },
+  { id: 1, name: 'Senior_Architect_2024.pdf', score: 92, date: '2 hours ago', status: 'Optimal' },
+  { id: 2, name: 'Lead_Developer_CV.pdf', score: 85, date: '1 day ago', status: 'Strong' },
+  { id: 3, name: 'Product_Manager_Draft.pdf', score: 68, date: '3 days ago', status: 'Needs Improvement' },
 ];
 
 export default function Dashboard() {
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold font-headline tracking-tight">Overview</h1>
-          <p className="text-muted-foreground">Track your resume performance and career progress.</p>
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-black font-headline tracking-tighter text-foreground flex items-center gap-3">
+            Career Dashboard
+            <Sparkles className="h-8 w-8 text-primary animate-pulse" />
+          </h1>
+          <p className="text-muted-foreground font-medium text-lg">Your AI-powered journey to professional excellence.</p>
         </div>
         <Link href="/dashboard/upload">
-          <Button className="rounded-xl px-6">
-            <Plus className="mr-2 h-4 w-4" /> New Resume Analysis
+          <Button className="rounded-2xl h-14 px-8 text-lg font-bold shadow-2xl shadow-primary/20 hover:scale-105 transition-all">
+            <Plus className="mr-2 h-6 w-6" /> Analyze Resume
           </Button>
         </Link>
       </div>
@@ -69,73 +75,110 @@ export default function Dashboard() {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard 
           title="Average ATS Score" 
-          value="82/100" 
+          value="82" 
           icon={Award} 
           trend="12%" 
           trendUp 
+          className="rounded-[2rem] bg-mesh border-none"
         />
         <StatCard 
-          title="Skills Identified" 
+          title="Expertise Units" 
           value="48" 
-          icon={Target} 
+          icon={Zap} 
           trend="4" 
           trendUp 
+          className="rounded-[2rem] bg-mesh border-none"
         />
         <StatCard 
           title="Total Analyses" 
           value="12" 
           icon={FileCheck} 
+          className="rounded-[2rem] bg-mesh border-none"
         />
         <StatCard 
-          title="Job Matches" 
+          title="Market Match" 
           value="156" 
           icon={Briefcase} 
           trend="24%" 
           trendUp 
+          className="rounded-[2rem] bg-mesh border-none"
         />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-7">
-        <Card className="lg:col-span-4 border-none shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-lg font-headline">Resume Strength Trend</CardTitle>
+      <div className="grid gap-8 lg:grid-cols-7">
+        <Card className="lg:col-span-4 rounded-[2.5rem] border-none shadow-sm overflow-hidden">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-xl font-black font-headline">Strength Trend</CardTitle>
+                <CardDescription>Visualizing your profile optimization over time.</CardDescription>
+              </div>
+              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                <TrendingUp className="h-5 w-5" />
+              </div>
+            </div>
           </CardHeader>
-          <CardContent className="h-[300px]">
+          <CardContent className="h-[320px] pt-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={performanceData}>
                 <defs>
                   <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3B58E6" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#3B58E6" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#888', fontSize: 12}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#888', fontSize: 12}} dx={-10} />
-                <Tooltip 
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" />
+                <XAxis 
+                  dataKey="name" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{fill: 'hsl(var(--muted-foreground))', fontSize: 12, fontWeight: 600}} 
+                  dy={10} 
                 />
-                <Area type="monotone" dataKey="score" stroke="#3B58E6" strokeWidth={3} fillOpacity={1} fill="url(#colorScore)" />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{fill: 'hsl(var(--muted-foreground))', fontSize: 12, fontWeight: 600}} 
+                  dx={-10} 
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    borderRadius: '1.25rem', 
+                    border: 'none', 
+                    boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
+                    padding: '12px 16px'
+                  }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="score" 
+                  stroke="hsl(var(--primary))" 
+                  strokeWidth={4} 
+                  fillOpacity={1} 
+                  fill="url(#colorScore)" 
+                />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-3 border-none shadow-sm">
+        <Card className="lg:col-span-3 rounded-[2.5rem] border-none shadow-sm overflow-hidden bg-mesh">
           <CardHeader>
-            <CardTitle className="text-lg font-headline">Skill Distribution</CardTitle>
+            <CardTitle className="text-xl font-black font-headline">Skill Archetype</CardTitle>
+            <CardDescription>Distribution of your core competencies.</CardDescription>
           </CardHeader>
-          <CardContent className="h-[300px] flex items-center justify-center">
+          <CardContent className="h-[320px] flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={skillDistribution}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
-                  paddingAngle={5}
+                  innerRadius={70}
+                  outerRadius={110}
+                  paddingAngle={8}
                   dataKey="value"
+                  cornerRadius={10}
                 >
                   {skillDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -148,30 +191,43 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="border-none shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg font-headline">Recent Analyses</CardTitle>
-            <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/10">View All</Button>
+      <div className="grid gap-8 lg:grid-cols-12">
+        <Card className="lg:col-span-8 rounded-[2.5rem] border-none shadow-sm overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between border-b bg-muted/20 px-8 py-6">
+            <div>
+              <CardTitle className="text-xl font-black font-headline">Recent Optimization Pipeline</CardTitle>
+              <CardDescription>Track your most recent AI analysis sessions.</CardDescription>
+            </div>
+            <Button variant="ghost" className="rounded-xl font-bold text-primary hover:bg-primary/5">
+              View History
+            </Button>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="p-0">
+            <div className="divide-y divide-border/50">
               {recentResumes.map((resume) => (
-                <div key={resume.id} className="flex items-center justify-between p-4 rounded-xl bg-background border transition-hover hover:border-primary/50 group">
-                  <div className="flex items-center gap-4">
+                <div key={resume.id} className="flex items-center justify-between p-6 transition-colors hover:bg-muted/30 group">
+                  <div className="flex items-center gap-5">
                     <div className={cn(
-                      "flex h-10 w-10 items-center justify-center rounded-lg font-bold text-xs",
-                      resume.score >= 80 ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                      "flex h-14 w-14 items-center justify-center rounded-2xl font-black text-lg shadow-sm transition-transform group-hover:scale-110 group-hover:rotate-3",
+                      resume.score >= 90 ? "bg-emerald-100 text-emerald-700" : 
+                      resume.score >= 80 ? "bg-indigo-100 text-indigo-700" : "bg-amber-100 text-amber-700"
                     )}>
                       {resume.score}
                     </div>
                     <div>
-                      <p className="font-medium text-sm group-hover:text-primary transition-colors">{resume.name}</p>
-                      <p className="text-xs text-muted-foreground">{resume.date}</p>
+                      <p className="font-black text-base group-hover:text-primary transition-colors">{resume.name}</p>
+                      <div className="flex items-center gap-3 mt-1">
+                        <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{resume.date}</p>
+                        <span className="h-1 w-1 rounded-full bg-muted-foreground/30"></span>
+                        <p className={cn(
+                          "text-xs font-black uppercase tracking-widest",
+                          resume.score >= 90 ? "text-emerald-600" : "text-amber-600"
+                        )}>{resume.status}</p>
+                      </div>
                     </div>
                   </div>
-                  <Button variant="ghost" size="icon">
-                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                  <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl hover:bg-primary hover:text-white transition-all">
+                    <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
               ))}
@@ -179,20 +235,35 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-primary border-none text-primary-foreground shadow-xl overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-accent/20 rounded-full -ml-16 -mb-16 blur-3xl"></div>
-          <CardContent className="p-8 relative z-10 space-y-6">
-            <h3 className="text-2xl font-bold font-headline leading-tight">Unlock Premium Career Scouting</h3>
-            <p className="text-primary-foreground/80 leading-relaxed">
-              Get direct intros to hiring managers and priority processing for high-volume roles.
-              Our premium users find jobs 2x faster.
-            </p>
-            <Button variant="secondary" className="w-full h-12 rounded-xl font-bold bg-white text-primary hover:bg-white/90">
-              Upgrade to Pro
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-4 space-y-6">
+          <Card className="bg-gradient-to-br from-indigo-600 to-violet-700 border-none text-primary-foreground shadow-2xl rounded-[2.5rem] overflow-hidden relative p-8">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+            <CardContent className="p-0 relative z-10 space-y-6">
+              <div className="h-14 w-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                <Target className="h-8 w-8" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-black font-headline leading-tight">Pro Career Scouting</h3>
+                <p className="text-indigo-100 font-medium text-sm leading-relaxed">
+                  Join our exclusive network of elite professionals. Get direct introductions to top-tier recruiters.
+                </p>
+              </div>
+              <Button variant="secondary" className="w-full h-14 rounded-2xl font-black text-lg bg-white text-indigo-700 hover:bg-indigo-50 shadow-xl shadow-black/20">
+                Upgrade to Elite
+              </Button>
+            </CardContent>
+          </Card>
+          
+          <div className="p-8 rounded-[2rem] border-2 border-primary/10 bg-primary/5 space-y-4">
+             <div className="flex items-center gap-2 text-primary">
+                <Sparkles className="h-5 w-5" />
+                <h4 className="font-black text-sm uppercase tracking-widest">AI Tip of the Day</h4>
+             </div>
+             <p className="text-sm font-medium text-muted-foreground leading-relaxed">
+               "Strong resumes focus on <span className="text-foreground font-bold underline decoration-primary underline-offset-4">quantifiable results</span>. Replace 'managed a team' with 'led a team of 15 to exceed KPIs by 30%'."
+             </p>
+          </div>
+        </div>
       </div>
     </div>
   );
