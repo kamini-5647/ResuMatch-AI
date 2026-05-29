@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -66,14 +67,16 @@ export default function LandingPage() {
             <div className="relative lg:ml-10">
               <div className="glass absolute -inset-4 rounded-3xl -z-10 rotate-2 bg-primary/5"></div>
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border bg-card">
-                <Image 
-                  src={heroImg?.imageUrl || ''} 
-                  alt="Dashboard Preview" 
-                  width={600} 
-                  height={400} 
-                  className="w-full object-cover"
-                  data-ai-hint="abstract network"
-                />
+                {heroImg?.imageUrl && (
+                  <Image 
+                    src={heroImg.imageUrl} 
+                    alt="Dashboard Preview" 
+                    width={600} 
+                    height={400} 
+                    className="w-full object-cover"
+                    data-ai-hint="abstract network"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent"></div>
               </div>
             </div>
@@ -162,27 +165,33 @@ export default function LandingPage() {
                 text: "The ATS score was eye-opening. I realized I was using the wrong terminology for my skills. Fixed it, got hired.",
                 img: "user-2"
               }
-            ].map((t, i) => (
-              <div key={i} className="glass p-8 rounded-2xl space-y-6">
-                <div className="flex items-center gap-1 text-amber-400">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
-                </div>
-                <p className="italic text-lg text-foreground/80">"{t.text}"</p>
-                <div className="flex items-center gap-4 border-t pt-6">
-                  <Image 
-                    src={PlaceHolderImages.find(img => img.id === t.img)?.imageUrl || ''} 
-                    alt={t.name} 
-                    width={48} 
-                    height={48} 
-                    className="rounded-full border-2 border-primary/20"
-                  />
-                  <div>
-                    <h4 className="font-bold font-headline">{t.name}</h4>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider">{t.role}</p>
+            ].map((t, i) => {
+              const userImg = PlaceHolderImages.find(img => img.id === t.img);
+              return (
+                <div key={i} className="glass p-8 rounded-2xl space-y-6">
+                  <div className="flex items-center gap-1 text-amber-400">
+                    {[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
+                  </div>
+                  <p className="italic text-lg text-foreground/80">"{t.text}"</p>
+                  <div className="flex items-center gap-4 border-t pt-6">
+                    {userImg?.imageUrl && (
+                      <Image 
+                        src={userImg.imageUrl} 
+                        alt={t.name} 
+                        width={48} 
+                        height={48} 
+                        className="rounded-full border-2 border-primary/20"
+                        data-ai-hint="professional headshot"
+                      />
+                    )}
+                    <div>
+                      <h4 className="font-bold font-headline">{t.name}</h4>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">{t.role}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

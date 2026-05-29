@@ -1,3 +1,4 @@
+
 {
   "placeholderImages": [
     {
@@ -17,6 +18,12 @@
       "description": "Professional headshot of a man",
       "imageUrl": "https://picsum.photos/seed/user2/200/200",
       "imageHint": "professional man"
+    },
+    {
+      "id": "user-default",
+      "description": "Default user avatar",
+      "imageUrl": "https://picsum.photos/seed/user-default/200/200",
+      "imageHint": "person avatar"
     }
   ]
 }

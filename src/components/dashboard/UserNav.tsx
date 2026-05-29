@@ -1,3 +1,4 @@
+
 import {
   Avatar,
   AvatarFallback,
@@ -16,8 +17,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Bell, CreditCard, LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export function UserNav() {
+  const userImg = PlaceHolderImages.find(img => img.id === 'user-default');
+
   return (
     <div className="flex items-center gap-4">
       <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-primary">
@@ -32,7 +36,7 @@ export function UserNav() {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-primary/20">
             <Avatar className="h-9 w-9">
-              <AvatarImage src="https://picsum.photos/seed/user/100/100" alt="User" />
+              {userImg?.imageUrl && <AvatarImage src={userImg.imageUrl} alt="User" />}
               <AvatarFallback>JD</AvatarFallback>
             </Avatar>
           </Button>
